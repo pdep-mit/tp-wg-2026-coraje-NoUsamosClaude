@@ -1,0 +1,29 @@
+import terrenos.*
+import personajes.*
+
+describe "Terrenos" {
+
+    test "Fuego sobrevive a Lava" {
+        lava.interactuarCon(fuego)
+
+        assert.that(fuego.estaVivo())
+    }
+
+    test "Agua muere en Lava" {
+        lava.interactuarCon(agua)
+
+        assert.notThat(agua.estaVivo())
+    }
+
+    test "Agua sobrevive en ZonaAgua" {
+        zonaAgua.interactuarCon(agua)
+
+        assert.that(agua.estaVivo())
+    }
+
+    test "Fuego muere en ZonaAgua" {
+        zonaAgua.interactuarCon(fuego)
+
+        assert.notThat(fuego.estaVivo())
+    }
+}

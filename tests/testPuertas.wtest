@@ -1,0 +1,41 @@
+import puertas.*
+import personajes.*
+
+describe "Tests de puertas" {
+
+    test "Fuego llega a su puerta" {
+        const fuego = new Fuego()
+        const puertaFuego = new PuertaFuego()
+
+        puertaFuego.interactuarCon(fuego)
+
+        assert.equals(true, fuego.llegoAPuerta())
+    }
+
+    test "Fuego no llega por la puerta de Agua" {
+        const fuego = new Fuego()
+        const puertaAgua = new PuertaAgua()
+
+        puertaAgua.interactuarCon(fuego)
+
+        assert.equals(false, fuego.llegoAPuerta())
+    }
+
+    test "Agua llega a su puerta" {
+        const agua = new Agua()
+        const puertaAgua = new PuertaAgua()
+
+        puertaAgua.interactuarCon(agua)
+
+        assert.equals(true, agua.llegoAPuerta())
+    }
+
+    test "Agua no llega por la puerta de Fuego" {
+        const agua = new Agua()
+        const puertaFuego = new PuertaFuego()
+
+        puertaFuego.interactuarCon(agua)
+
+        assert.equals(false, agua.llegoAPuerta())
+    }
+}

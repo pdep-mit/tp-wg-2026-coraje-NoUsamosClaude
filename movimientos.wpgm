@@ -1,0 +1,39 @@
+import wollok.game.*
+import personajes.*
+
+program movimientos {
+
+    keyboard.w().whilePressedDo({
+        fuego.position().goUp(1)
+    }, 100)
+
+    keyboard.s().whilePressedDo({
+        fuego.position().goDown(1)
+    }, 100)
+
+    keyboard.a().whilePressedDo({
+        fuego.position().goLeft(1)
+    }, 100)
+
+    keyboard.d().whilePressedDo({
+        fuego.position().goRight(1)
+    }, 100)
+
+    keyboard.up().whilePressedDo({
+        agua.position().goUp(1)
+    }, 100)
+
+    keyboard.down().whilePressedDo({
+        agua.position().goDown(1)
+    }, 100)
+
+    keyboard.left().whilePressedDo({
+        agua.position().goLeft(1)
+    }, 100)
+
+    keyboard.right().whilePressedDo({
+        agua.position().goRight(1)
+    }, 100)
+
+    game.start()
+}

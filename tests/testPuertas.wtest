@@ -3,39 +3,40 @@ import personajes.*
 
 describe "Tests de puertas" {
 
+    method initialize() {
+        fuego.reiniciar()
+        agua.reiniciar()
+    }
+
     test "Fuego llega a su puerta" {
-        const fuego = new Fuego()
-        const puertaFuego = new PuertaFuego()
+        const puertaFuego = new PuertaFuego(position = game.at(1, 1))
 
         puertaFuego.interactuarCon(fuego)
 
-        assert.equals(true, fuego.llegoAPuerta())
+        assert.that(fuego.llegoAPuerta())
     }
 
     test "Fuego no llega por la puerta de Agua" {
-        const fuego = new Fuego()
-        const puertaAgua = new PuertaAgua()
+        const puertaAgua = new PuertaAgua(position = game.at(1, 1))
 
         puertaAgua.interactuarCon(fuego)
 
-        assert.equals(false, fuego.llegoAPuerta())
+        assert.notThat(fuego.llegoAPuerta())
     }
 
     test "Agua llega a su puerta" {
-        const agua = new Agua()
-        const puertaAgua = new PuertaAgua()
+        const puertaAgua = new PuertaAgua(position = game.at(1, 1))
 
         puertaAgua.interactuarCon(agua)
 
-        assert.equals(true, agua.llegoAPuerta())
+        assert.that(agua.llegoAPuerta())
     }
 
     test "Agua no llega por la puerta de Fuego" {
-        const agua = new Agua()
-        const puertaFuego = new PuertaFuego()
+        const puertaFuego = new PuertaFuego(position = game.at(1, 1))
 
         puertaFuego.interactuarCon(agua)
 
-        assert.equals(false, agua.llegoAPuerta())
+        assert.notThat(agua.llegoAPuerta())
     }
 }

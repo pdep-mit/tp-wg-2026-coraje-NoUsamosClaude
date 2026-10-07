@@ -1,0 +1,88 @@
+import personajes.*
+import direcciones.*
+import paredes.*
+import terrenos.*
+import puertas.*
+import nivel.*
+
+describe "Tests de integracion" {
+
+    const puertaFuego = new PuertaFuego(position = game.at(3, 2))
+    const puertaAgua = new PuertaAgua(position = game.at(2, 5))
+
+    method initialize() {
+        game.width(10)
+        game.height(10)
+        fuego.reiniciar()
+        agua.reiniciar()
+        fuego.position(game.at(1, 1))
+        agua.position(game.at(1, 5))
+        game.addVisual(new Pared(position = game.at(2, 1)))
+        game.addVisual(puertaFuego)
+        game.addVisual(puertaAgua)
+    }
+
+    test "Fuego rodea la pared y llega a su puerta" {
+        fuego.mover(derecha)
+        assert.equals(game.at(1, 1), fuego.position())
+
+        fuego.mover(arriba)
+        fuego.mover(derecha)
+        fuego.mover(derecha)
+        puertaFuego.interactuarCon(fuego)
+
+        assert.equals(puertaFuego.position(), fuego.position())
+        assert.that(fuego.llegoAPuerta())
+    }
+
+    test "Si llegan los dos a sus puertas se gana el nivel" {
+        fuego.mover(arriba)
+        fuego.mover(derecha)
+        fuego.mover(derecha)
+        puertaFuego.interactuarCon(fuego)
+        agua.mover(derecha)
+        puertaAgua.interactuarCon(agua)
+
+        assert.that(nivel1.gano())
+        assert.notThat(nivel1.perdio())
+    }
+
+    test "Si llega solo uno no se gana el nivel" {
+        agua.mover(derecha)
+        puertaAgua.interactuarCon(agua)
+
+        assert.notThat(nivel1.gano())
+    }
+
+    test "Agua no puede usar la puerta de fuego" {
+        agua.position(game.at(3, 3))
+        agua.mover(abajo)
+        puertaFuego.interactuarCon(agua)
+
+        assert.equals(puertaFuego.position(), agua.position())
+        assert.notThat(agua.llegoAPuerta())
+    }
+
+    test "Si agua cae en la lava se pierde el nivel" {
+        agua.mover(derecha)
+        new Lava(position = game.at(1, 1)).interactuarCon(agua)
+
+        assert.that(nivel1.perdio())
+        assert.notThat(nivel1.gano())
+    }
+
+    test "Si fuego toca el agua se pierde el nivel" {
+        fuego.mover(arriba)
+        new ZonaAgua(position = game.at(1, 1)).interactuarCon(fuego)
+
+        assert.that(nivel1.perdio())
+    }
+
+    test "Un personaje muerto no puede seguir hasta su puerta" {
+        agua.morir()
+        agua.mover(derecha)
+
+        assert.equals(game.at(1, 5), agua.position())
+        assert.notThat(agua.llegoAPuerta())
+    }
+}

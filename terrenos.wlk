@@ -1,4 +1,7 @@
-object lava {
+class Lava {
+    const property position
+
+    method image() = "lava.png"
 
     method esSolido() = false
 
@@ -7,7 +10,10 @@ object lava {
     }
 }
 
-object zonaAgua {
+class ZonaAgua {
+    const property position
+
+    method image() = "zonaAgua.png"
 
     method esSolido() = false
 

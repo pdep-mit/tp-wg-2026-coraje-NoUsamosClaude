@@ -1,6 +1,8 @@
 import personajes.*
 import direcciones.*
 import paredes.*
+import terrenos.*
+import puertas.*
 
 describe "Tests de movimiento" {
 
@@ -65,5 +67,37 @@ describe "Tests de movimiento" {
         fuego.mover(arriba)
 
         assert.equals(game.at(5, 5), fuego.position())
+    }
+
+    test "Agua muere al entrar a la lava" {
+        game.addVisual(new Lava(position = game.at(3, 2)))
+
+        agua.mover(derecha)
+
+        assert.notThat(agua.vivo())
+    }
+
+    test "Fuego pasa por la lava y sigue vivo" {
+        game.addVisual(new Lava(position = game.at(5, 6)))
+
+        fuego.mover(arriba)
+
+        assert.that(fuego.vivo())
+    }
+
+    test "Fuego muere al entrar al agua" {
+        game.addVisual(new ZonaAgua(position = game.at(6, 5)))
+
+        fuego.mover(derecha)
+
+        assert.notThat(fuego.vivo())
+    }
+
+    test "Fuego llega a su puerta al moverse sobre ella" {
+        game.addVisual(new PuertaFuego(position = game.at(5, 4)))
+
+        fuego.mover(abajo)
+
+        assert.that(fuego.llegoAPuerta())
     }
 }

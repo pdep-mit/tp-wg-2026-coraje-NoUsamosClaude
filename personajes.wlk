@@ -16,10 +16,14 @@ class Personaje {
 
     method esSolido() = false
 
+    method interactuarCon(otroPersonaje) {
+    }
+
     method mover(direccion) {
         const destino = direccion.siguiente(position)
         if (vivo && self.puedeIrA(destino)) {
             position = destino
+            game.getObjectsIn(destino).forEach({ elemento => elemento.interactuarCon(self) })
         }
     }
 

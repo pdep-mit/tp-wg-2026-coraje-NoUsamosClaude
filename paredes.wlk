@@ -5,4 +5,7 @@ class Pared {
 
     method esSolido() = true
 
+    method interactuarCon(personaje) {
+    }
+
 }

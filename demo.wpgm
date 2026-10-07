@@ -1,0 +1,71 @@
+import wollok.game.*
+import personajes.*
+import direcciones.*
+import paredes.*
+import terrenos.*
+import puertas.*
+import nivel.*
+
+program demo {
+
+    game.title("Fuego y Agua | demo")
+    game.height(10)
+    game.width(10)
+
+    fuego.reiniciar()
+    agua.reiniciar()
+    fuego.position(game.at(1, 1))
+    agua.position(game.at(1, 2))
+
+    (0..9).forEach({ n =>
+        game.addVisual(new Pared(position = game.at(n, 0)))
+        game.addVisual(new Pared(position = game.at(n, 9)))
+        game.addVisual(new Pared(position = game.at(0, n)))
+        game.addVisual(new Pared(position = game.at(9, n)))
+    })
+    (1..6).forEach({ n => game.addVisual(new Pared(position = game.at(5, n))) })
+
+    game.addVisual(new Lava(position = game.at(3, 1)))
+    game.addVisual(new Lava(position = game.at(3, 2)))
+    game.addVisual(new ZonaAgua(position = game.at(3, 4)))
+    game.addVisual(new ZonaAgua(position = game.at(3, 5)))
+    game.addVisual(new Lava(position = game.at(7, 7)))
+    game.addVisual(new ZonaAgua(position = game.at(7, 8)))
+    game.addVisual(new PuertaFuego(position = game.at(8, 1)))
+    game.addVisual(new PuertaAgua(position = game.at(8, 2)))
+
+    game.addVisual(fuego)
+    game.addVisual(agua)
+
+    keyboard.w().whilePressedDo({ fuego.mover(arriba) }, 100)
+    keyboard.s().whilePressedDo({ fuego.mover(abajo) }, 100)
+    keyboard.a().whilePressedDo({ fuego.mover(izquierda) }, 100)
+    keyboard.d().whilePressedDo({ fuego.mover(derecha) }, 100)
+
+    keyboard.up().whilePressedDo({ agua.mover(arriba) }, 100)
+    keyboard.down().whilePressedDo({ agua.mover(abajo) }, 100)
+    keyboard.left().whilePressedDo({ agua.mover(izquierda) }, 100)
+    keyboard.right().whilePressedDo({ agua.mover(derecha) }, 100)
+
+    const estado = object { var property anunciado = false }
+
+    keyboard.r().onPressDo({
+        fuego.reiniciar()
+        agua.reiniciar()
+        fuego.position(game.at(1, 1))
+        agua.position(game.at(1, 2))
+        estado.anunciado(false)
+    })
+
+    game.onTick(100, "fin", {
+        if (!estado.anunciado() && nivel1.gano()) {
+            estado.anunciado(true)
+            game.say(fuego, "Ganaron! (R para reiniciar)")
+        } else if (!estado.anunciado() && nivel1.perdio()) {
+            estado.anunciado(true)
+            game.say(fuego, "Perdieron (R para reiniciar)")
+        }
+    })
+
+    game.start()
+}

@@ -1,3 +1,5 @@
+
+import wollok.game.*
 import terrenos.*
 import personajes.*
 
@@ -30,5 +32,41 @@ describe "Terrenos" {
         new ZonaAgua(position = game.at(1, 1)).interactuarCon(fuego)
 
         assert.notThat(fuego.vivo())
+    }
+
+    test "Fuego muere en Acido" {
+        new Acido(position = game.at(1, 1)).interactuarCon(fuego)
+
+        assert.notThat(fuego.vivo())
+    }
+
+    test "Agua muere en Acido" {
+        new Acido(position = game.at(1, 1)).interactuarCon(agua)
+
+        assert.notThat(agua.vivo())
+    }
+
+    test "Acido no bloquea el movimiento" {
+        const acido = new Acido(position = game.at(1, 1))
+
+        assert.notThat(acido.esSolido())
+    }
+
+    test "Los terrenos tienen comportamientos diferentes" {
+        const lava = new Lava(position = game.at(1, 1))
+        const zonaAgua = new ZonaAgua(position = game.at(2, 2))
+        const acido = new Acido(position = game.at(3, 3))
+
+        lava.interactuarCon(fuego)
+        zonaAgua.interactuarCon(agua)
+
+        assert.that(fuego.vivo())
+        assert.that(agua.vivo())
+
+        acido.interactuarCon(fuego)
+        acido.interactuarCon(agua)
+
+        assert.notThat(fuego.vivo())
+        assert.notThat(agua.vivo())
     }
 }

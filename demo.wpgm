@@ -31,6 +31,8 @@ program demo {
     game.addVisual(new ZonaAgua(position = game.at(3, 5)))
     game.addVisual(new Lava(position = game.at(7, 7)))
     game.addVisual(new ZonaAgua(position = game.at(7, 8)))
+    game.addVisual(new Acido(position = game.at(4, 4)))
+    game.addVisual(new Acido(position = game.at(4, 5)))
     game.addVisual(new PuertaFuego(position = game.at(8, 1)))
     game.addVisual(new PuertaAgua(position = game.at(8, 2)))
 

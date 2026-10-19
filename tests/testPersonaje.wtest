@@ -1,0 +1,36 @@
+import personajes.*
+
+describe "Tests de personajes" {
+
+    test "fuego muere al tocar agua" {
+        fuego.revivir()
+
+        fuego.tocarAgua()
+
+        assert.notThat(fuego.vivo())
+    }
+
+    test "fuego no muere al tocar fuego" {
+        fuego.revivir()
+
+        fuego.tocarFuego()
+
+        assert.that(fuego.vivo())
+    }
+
+    test "agua muere al tocar fuego" {
+        agua.revivir()
+
+        agua.tocarFuego()
+
+        assert.notThat(agua.vivo())
+    }
+
+    test "agua no muere al tocar agua" {
+        agua.revivir()
+
+        agua.tocarAgua()
+
+        assert.that(agua.vivo())
+    }
+}

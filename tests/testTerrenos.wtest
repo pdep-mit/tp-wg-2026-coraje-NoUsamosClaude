@@ -3,27 +3,32 @@ import personajes.*
 
 describe "Terrenos" {
 
-    test "Fuego sobrevive a Lava" {
-        lava.interactuarCon(fuego)
+    method initialize() {
+        fuego.reiniciar()
+        agua.reiniciar()
+    }
 
-        assert.that(fuego.estaVivo())
+    test "Fuego sobrevive a Lava" {
+        new Lava(position = game.at(1, 1)).interactuarCon(fuego)
+
+        assert.that(fuego.vivo())
     }
 
     test "Agua muere en Lava" {
-        lava.interactuarCon(agua)
+        new Lava(position = game.at(1, 1)).interactuarCon(agua)
 
-        assert.notThat(agua.estaVivo())
+        assert.notThat(agua.vivo())
     }
 
     test "Agua sobrevive en ZonaAgua" {
-        zonaAgua.interactuarCon(agua)
+        new ZonaAgua(position = game.at(1, 1)).interactuarCon(agua)
 
-        assert.that(agua.estaVivo())
+        assert.that(agua.vivo())
     }
 
     test "Fuego muere en ZonaAgua" {
-        zonaAgua.interactuarCon(fuego)
+        new ZonaAgua(position = game.at(1, 1)).interactuarCon(fuego)
 
-        assert.notThat(fuego.estaVivo())
+        assert.notThat(fuego.vivo())
     }
 }

@@ -23,6 +23,7 @@ class Personaje {
         const destino = direccion.siguiente(position)
         if (vivo && self.puedeIrA(destino)) {
             position = destino
+            llegoAPuerta = false
             game.getObjectsIn(destino).forEach({ elemento => elemento.interactuarCon(self) })
         }
     }

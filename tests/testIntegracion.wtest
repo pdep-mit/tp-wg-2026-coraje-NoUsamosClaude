@@ -85,4 +85,30 @@ describe "Tests de integracion" {
         assert.equals(game.at(1, 5), agua.position())
         assert.notThat(agua.llegoAPuerta())
     }
+
+    test "Si fuego sale de su puerta deja de contar como llegado" {
+        fuego.mover(arriba)
+        fuego.mover(derecha)
+        fuego.mover(derecha)
+
+        assert.equals(puertaFuego.position(), fuego.position())
+        assert.that(fuego.llegoAPuerta())
+
+        fuego.mover(izquierda)
+
+        assert.equals(game.at(2, 2), fuego.position())
+        assert.notThat(fuego.llegoAPuerta())
+    }
+
+    test "Si agua sale de su puerta deja de contar como llegada" {
+        agua.mover(derecha)
+
+        assert.equals(puertaAgua.position(), agua.position())
+        assert.that(agua.llegoAPuerta())
+
+        agua.mover(izquierda)
+
+        assert.equals(game.at(1, 5), agua.position())
+        assert.notThat(agua.llegoAPuerta())
+    }
 }

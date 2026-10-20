@@ -1,0 +1,130 @@
+import personajes.*
+import direcciones.*
+import paredes.*
+
+describe "Tests de paredes y botones" {
+
+    method initialize() {
+        game.width(10)
+        game.height(10)
+        fuego.reiniciar()
+        agua.reiniciar()
+        fuego.position(game.at(5, 5))
+        agua.position(game.at(2, 2))
+    }
+
+    test "Una pared normal es solida" {
+        const pared = new Pared(position = game.at(1, 1))
+
+        assert.that(pared.esSolido())
+    }
+
+    test "Una pared normal bloquea al personaje" {
+        game.addVisual(new Pared(position = game.at(5, 6)))
+
+        fuego.mover(arriba)
+
+        assert.equals(game.at(5, 5), fuego.position())
+    }
+
+    test "Una pared rompible sin romper es solida" {
+        const pared = new ParedRompible(position = game.at(1, 1))
+
+        assert.that(pared.esSolido())
+        assert.notThat(pared.rota())
+    }
+
+    test "Una pared rompible sin romper bloquea al personaje" {
+        game.addVisual(new ParedRompible(position = game.at(5, 6)))
+
+        fuego.mover(arriba)
+
+        assert.equals(game.at(5, 5), fuego.position())
+    }
+
+    test "Al romper una pared rompible deja de ser solida" {
+        const pared = new ParedRompible(position = game.at(1, 1))
+
+        pared.romper()
+
+        assert.that(pared.rota())
+        assert.notThat(pared.esSolido())
+    }
+
+    test "Al romper una pared rompible se saca del tablero" {
+        const pared = new ParedRompible(position = game.at(5, 6))
+        game.addVisual(pared)
+
+        pared.romper()
+
+        assert.notThat(game.hasVisual(pared))
+    }
+
+    test "Despues de romper la pared el personaje puede atravesarla" {
+        const pared = new ParedRompible(position = game.at(5, 6))
+        game.addVisual(pared)
+
+        pared.romper()
+        fuego.mover(arriba)
+
+        assert.equals(game.at(5, 6), fuego.position())
+    }
+
+    test "Un boton no es solido" {
+        const boton = new Boton(position = game.at(1, 1))
+
+        assert.notThat(boton.esSolido())
+    }
+
+    test "Al pisar un boton se rompen sus paredes" {
+        const pared1 = new ParedRompible(position = game.at(7, 7))
+        const pared2 = new ParedRompible(position = game.at(7, 8))
+        game.addVisual(pared1)
+        game.addVisual(pared2)
+        game.addVisual(new Boton(position = game.at(5, 6), paredes = [pared1, pared2]))
+
+        fuego.mover(arriba)
+
+        assert.that(pared1.rota())
+        assert.that(pared2.rota())
+    }
+
+    test "Un boton solo rompe las paredes que tiene asignadas" {
+        const asignada = new ParedRompible(position = game.at(7, 7))
+        const otra = new ParedRompible(position = game.at(7, 8))
+        game.addVisual(asignada)
+        game.addVisual(otra)
+        game.addVisual(new Boton(position = game.at(5, 6), paredes = [asignada]))
+
+        fuego.mover(arriba)
+
+        assert.that(asignada.rota())
+        assert.notThat(otra.rota())
+        assert.that(otra.esSolido())
+    }
+
+    test "Un boton no rompe paredes normales" {
+        const pared = new Pared(position = game.at(5, 7))
+        game.addVisual(pared)
+        game.addVisual(new Boton(position = game.at(5, 6)))
+
+        fuego.mover(arriba)
+        fuego.mover(arriba)
+
+        assert.equals(game.at(5, 6), fuego.position())
+    }
+
+    test "Agua pisa el boton y fuego atraviesa la pared rota" {
+        const pared = new ParedRompible(position = game.at(5, 6))
+        game.addVisual(pared)
+        game.addVisual(new Boton(position = game.at(3, 2), paredes = [pared]))
+
+        fuego.mover(arriba)
+        assert.equals(game.at(5, 5), fuego.position())
+
+        agua.mover(derecha)
+        fuego.mover(arriba)
+
+        assert.equals(game.at(5, 6), fuego.position())
+    }
+}

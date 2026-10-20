@@ -28,6 +28,12 @@ program demo {
     (3..4).forEach({ n =>game.addVisual(new Pared(position = game.at(2, n)))})
     (3..4).forEach({ n =>game.addVisual(new Pared(position = game.at(n, 6)))})
 
+    const paredRompibleArriba = new ParedRompible(position = game.at(5, 8))
+    const paredRompibleAbajo = new ParedRompible(position = game.at(5, 7))
+    game.addVisual(paredRompibleArriba)
+    game.addVisual(paredRompibleAbajo)
+    game.addVisual(new Boton(position = game.at(1, 8), paredes = [paredRompibleArriba, paredRompibleAbajo]))
+
     game.addVisual(new Lava(position = game.at(3, 1)))
     game.addVisual(new Lava(position = game.at(3, 2)))
     game.addVisual(new Lava(position = game.at(4, 2)))

@@ -1,0 +1,134 @@
+import wollok.game.*
+import personajes.*
+import direcciones.*
+import terrenos.*
+import paredes.*
+import puertas.*
+import nivel.*
+
+describe "Integracion de personajes" {
+
+    method initialize() {
+        game.width(10)
+        game.height(10)
+        fuego.reiniciar()
+        agua.reiniciar()
+        fuego.position(game.at(1, 1))
+        agua.position(game.at(1, 3))
+        game.addVisual(fuego)
+        game.addVisual(agua)
+    }
+
+    test "Ambos mueren al entrar al acido y ya no pueden moverse" {
+        game.addVisual(new Acido(position = game.at(2, 1)))
+        game.addVisual(new Acido(position = game.at(2, 3)))
+
+        [fuego, agua].forEach({ personaje =>
+            personaje.mover(derecha)
+            assert.notThat(personaje.vivo())
+            personaje.mover(derecha)
+        })
+
+        assert.equals(game.at(2, 1), fuego.position())
+        assert.equals(game.at(2, 3), agua.position())
+        assert.that(nivel1.perdio())
+        assert.notThat(nivel1.gano())
+    }
+
+    test "Cada personaje atraviesa su terreno y llega a su puerta" {
+        game.addVisual(new Lava(position = game.at(2, 1)))
+        game.addVisual(new ZonaAgua(position = game.at(2, 3)))
+        game.addVisual(new PuertaFuego(position = game.at(3, 1)))
+        game.addVisual(new PuertaAgua(position = game.at(3, 3)))
+
+        [fuego, agua].forEach({ personaje =>
+            personaje.mover(derecha)
+            assert.that(personaje.vivo())
+            personaje.mover(derecha)
+            assert.that(personaje.llegoAPuerta())
+        })
+
+        assert.that(nivel1.gano())
+        assert.notThat(nivel1.perdio())
+    }
+
+    test "Las puertas contrarias no cuentan como llegada al pisarlas" {
+        game.addVisual(new PuertaAgua(position = game.at(2, 1)))
+        game.addVisual(new PuertaFuego(position = game.at(2, 3)))
+
+        [fuego, agua].forEach({ personaje =>
+            personaje.mover(derecha)
+            assert.that(personaje.vivo())
+            assert.notThat(personaje.llegoAPuerta())
+        })
+
+        assert.notThat(nivel1.gano())
+    }
+
+    test "Fuego activa el boton y agua atraviesa la pared que lo bloqueaba" {
+        const pared = new ParedRompible(position = game.at(2, 3))
+        game.addVisual(pared)
+        game.addVisual(new Boton(position = game.at(2, 1), paredes = [pared]))
+
+        agua.mover(derecha)
+        assert.equals(game.at(1, 3), agua.position())
+
+        fuego.mover(derecha)
+        agua.mover(derecha)
+
+        assert.that(pared.rota())
+        assert.equals(game.at(2, 3), agua.position())
+        assert.that(fuego.vivo())
+        assert.that(agua.vivo())
+    }
+
+    test "Un personaje muerto no alcanza el boton ni rompe la pared" {
+        const pared = new ParedRompible(position = game.at(2, 3))
+        game.addVisual(pared)
+        game.addVisual(new Boton(position = game.at(2, 1), paredes = [pared]))
+        fuego.morir()
+
+        fuego.mover(derecha)
+        agua.mover(derecha)
+
+        assert.equals(game.at(1, 1), fuego.position())
+        assert.equals(game.at(1, 3), agua.position())
+        assert.notThat(pared.rota())
+    }
+
+    test "Los personajes pueden compartir una casilla sin bloquearse" {
+        agua.position(game.at(2, 1))
+
+        fuego.mover(derecha)
+
+        assert.equals(agua.position(), fuego.position())
+        assert.that(fuego.vivo())
+        assert.that(agua.vivo())
+    }
+
+    test "Morir en la puerta impide ganar aunque el otro ya haya llegado" {
+        game.addVisual(new PuertaFuego(position = game.at(2, 1)))
+        game.addVisual(new PuertaAgua(position = game.at(2, 3)))
+        fuego.mover(derecha)
+        agua.mover(derecha)
+        assert.that(nivel1.gano())
+
+        new Acido(position = fuego.position()).interactuarCon(fuego)
+
+        assert.notThat(fuego.llegoAPuerta())
+        assert.notThat(nivel1.gano())
+        assert.that(nivel1.perdio())
+    }
+
+    test "Una puerta no registra la llegada de un personaje ya muerto" {
+        fuego.morir()
+        agua.morir()
+
+        new PuertaFuego(position = fuego.position()).interactuarCon(fuego)
+        new PuertaAgua(position = agua.position()).interactuarCon(agua)
+
+        assert.notThat(fuego.llegoAPuerta())
+        assert.notThat(agua.llegoAPuerta())
+        assert.notThat(nivel1.gano())
+    }
+}

@@ -4,7 +4,7 @@
 
 **Integrantes:**
 - Carlos Eduardo Saikali Pulido
-- Nombre y Apellido
+- Maximo Lautaro Starowiecki
 - Nombre y Apellido
 - Nombre y Apellido
 - Nombre y Apellido

@@ -32,6 +32,13 @@ class ParedRompible inherits Obstaculo {
         }
     }
 
+    method reiniciar() {
+        rota = false
+        if (!game.hasVisual(self)) {
+            game.addVisual(self)
+        }
+    }
+
 }
 
 class Boton {

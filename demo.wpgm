@@ -51,15 +51,16 @@ program demo {
     game.addVisual(fuego)
     game.addVisual(agua)
 
-    keyboard.w().whilePressedDo({ fuego.mover(arriba) }, 100)
-    keyboard.s().whilePressedDo({ fuego.mover(abajo) }, 100)
-    keyboard.a().whilePressedDo({ fuego.mover(izquierda) }, 100)
-    keyboard.d().whilePressedDo({ fuego.mover(derecha) }, 100)
+    const intervaloMovimiento = 130
+    keyboard.w().whilePressedDo({ fuego.mover(arriba) }, intervaloMovimiento)
+    keyboard.s().whilePressedDo({ fuego.mover(abajo) }, intervaloMovimiento)
+    keyboard.a().whilePressedDo({ fuego.mover(izquierda) }, intervaloMovimiento)
+    keyboard.d().whilePressedDo({ fuego.mover(derecha) }, intervaloMovimiento)
 
-    keyboard.up().whilePressedDo({ agua.mover(arriba) }, 100)
-    keyboard.down().whilePressedDo({ agua.mover(abajo) }, 100)
-    keyboard.left().whilePressedDo({ agua.mover(izquierda) }, 100)
-    keyboard.right().whilePressedDo({ agua.mover(derecha) }, 100)
+    keyboard.up().whilePressedDo({ agua.mover(arriba) }, intervaloMovimiento)
+    keyboard.down().whilePressedDo({ agua.mover(abajo) }, intervaloMovimiento)
+    keyboard.left().whilePressedDo({ agua.mover(izquierda) }, intervaloMovimiento)
+    keyboard.right().whilePressedDo({ agua.mover(derecha) }, intervaloMovimiento)
 
     const estado = object { var property anunciado = false }
 
@@ -68,6 +69,8 @@ program demo {
         agua.reiniciar()
         fuego.position(game.at(1, 1))
         agua.position(game.at(1, 2))
+        paredRompibleArriba.reiniciar()
+        paredRompibleAbajo.reiniciar()
         estado.anunciado(false)
     })
 

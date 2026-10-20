@@ -127,4 +127,29 @@ describe "Tests de paredes y botones" {
 
         assert.equals(game.at(5, 6), fuego.position())
     }
+
+    test "Reiniciar restaura la pared y el boton puede abrirla otra vez" {
+        const pared = new ParedRompible(position = game.at(5, 6))
+        game.addVisual(pared)
+        game.addVisual(new Boton(position = game.at(3, 2), paredes = [pared]))
+        agua.mover(derecha)
+        assert.notThat(game.hasVisual(pared))
+
+        pared.reiniciar()
+        pared.reiniciar()
+        fuego.mover(arriba)
+
+        assert.that(game.hasVisual(pared))
+        assert.notThat(pared.rota())
+        assert.that(pared.esSolido())
+        assert.equals(game.at(5, 5), fuego.position())
+
+        agua.mover(izquierda)
+        agua.mover(derecha)
+        fuego.mover(arriba)
+
+        assert.that(pared.rota())
+        assert.notThat(game.hasVisual(pared))
+        assert.equals(game.at(5, 6), fuego.position())
+    }
 }

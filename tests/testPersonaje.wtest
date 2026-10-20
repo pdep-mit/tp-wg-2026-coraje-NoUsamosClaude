@@ -2,6 +2,11 @@ import personajes.*
 
 describe "Tests de personajes" {
 
+    method initialize() {
+        fuego.reiniciar()
+        agua.reiniciar()
+    }
+
     test "fuego muere al tocar agua" {
         fuego.revivir()
 
@@ -32,5 +37,63 @@ describe "Tests de personajes" {
         agua.tocarAgua()
 
         assert.that(agua.vivo())
+    }
+
+    test "Morir borra la llegada de cualquiera de los personajes" {
+        [fuego, agua].forEach({ personaje =>
+            personaje.marcarLlegada()
+            personaje.morir()
+        })
+
+        assert.notThat(fuego.vivo())
+        assert.notThat(agua.vivo())
+        assert.notThat(fuego.llegoAPuerta())
+        assert.notThat(agua.llegoAPuerta())
+    }
+
+    test "Un personaje muerto no puede marcar su llegada" {
+        [fuego, agua].forEach({ personaje =>
+            personaje.morir()
+            personaje.marcarLlegada()
+        })
+
+        assert.notThat(fuego.llegoAPuerta())
+        assert.notThat(agua.llegoAPuerta())
+    }
+
+    test "Reiniciar revive y borra la llegada" {
+        fuego.marcarLlegada()
+        agua.morir()
+
+        [fuego, agua].forEach({ personaje =>
+            personaje.reiniciar()
+        })
+
+        assert.that(fuego.vivo())
+        assert.that(agua.vivo())
+        assert.notThat(fuego.llegoAPuerta())
+        assert.notThat(agua.llegoAPuerta())
+    }
+
+    test "Revivir permite recuperarse despues de morir" {
+        [fuego, agua].forEach({ personaje =>
+            personaje.morir()
+            personaje.revivir()
+        })
+
+        assert.that(fuego.vivo())
+        assert.that(agua.vivo())
+        assert.notThat(fuego.llegoAPuerta())
+        assert.notThat(agua.llegoAPuerta())
+    }
+
+    test "Los personajes mantienen su estado independiente" {
+        fuego.marcarLlegada()
+        agua.morir()
+
+        assert.that(fuego.vivo())
+        assert.that(fuego.llegoAPuerta())
+        assert.notThat(agua.vivo())
+        assert.notThat(agua.llegoAPuerta())
     }
 }

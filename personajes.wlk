@@ -6,8 +6,19 @@ class Personaje {
     var property llegoAPuerta = false
     var property position = game.at(1, 1)
 
+    method image()
+    method tocarAgua()
+    method tocarLava()
+    method interactuarConPuertaFuego()
+    method interactuarConPuertaAgua()
+
+    method tocarFuego() {
+        self.tocarLava()
+    }
+
     method morir() {
         vivo = false
+        llegoAPuerta = false
     }
 
     method revivir() {
@@ -36,7 +47,9 @@ class Personaje {
     method hayObstaculoEn(destino) = game.getObjectsIn(destino).any({ elemento => elemento.esSolido() })
 
     method marcarLlegada() {
-        llegoAPuerta = true
+        if (vivo) {
+            llegoAPuerta = true
+        }
     }
 
     method reiniciar() {
@@ -47,45 +60,38 @@ class Personaje {
 
 object fuego inherits Personaje {
 
-    method image() = "fuego.png"
+    override method image() = "fuego.png"
 
-    method tocarFuego() {
-    }
-
-    method tocarAgua() {
+    override method tocarAgua() {
         self.morir()
     }
 
-    method tocarLava() {
+    override method tocarLava() {
     }
 
-    method interactuarConPuertaFuego() {
+    override method interactuarConPuertaFuego() {
         self.marcarLlegada()
     }
 
-    method interactuarConPuertaAgua() {
+    override method interactuarConPuertaAgua() {
     }
 }
 
 object agua inherits Personaje {
 
-    method image() = "agua.png"
+    override method image() = "agua.png"
 
-    method tocarFuego() {
+    override method tocarAgua() {
+    }
+
+    override method tocarLava() {
         self.morir()
     }
 
-    method tocarAgua() {
+    override method interactuarConPuertaFuego() {
     }
 
-    method tocarLava() {
-        self.morir()
-    }
-
-    method interactuarConPuertaFuego() {
-    }
-
-    method interactuarConPuertaAgua() {
+    override method interactuarConPuertaAgua() {
         self.marcarLlegada()
     }
 }

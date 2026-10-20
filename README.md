@@ -1,9 +1,9 @@
 # Wollok Game: Título de juego
 
-**Grupo:** Nombre de Grupo
+**Grupo:** NoUsamosClaude
 
 **Integrantes:**
-- Nombre y Apellido
+- Carlos Eduardo Saikali Pulido
 - Nombre y Apellido
 - Nombre y Apellido
 - Nombre y Apellido

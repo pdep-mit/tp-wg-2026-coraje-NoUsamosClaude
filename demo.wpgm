@@ -2,6 +2,7 @@ import wollok.game.*
 import personajes.*
 import direcciones.*
 import nivel.*
+import carteles.*
 
 program demo {
 
@@ -25,6 +26,7 @@ program demo {
     const estado = object { var property anunciado = false }
 
     keyboard.r().onPressDo({
+        pantalla.ocultar()
         niveles.reiniciar()
         estado.anunciado(false)
     })
@@ -33,17 +35,18 @@ program demo {
         if (!estado.anunciado() && niveles.actual().gano()) {
             estado.anunciado(true)
             if (niveles.hayProximo()) {
-                game.say(fuego, "Nivel superado!")
+                pantalla.mostrar(cartelNivelSuperado)
                 game.schedule(1500, {
+                    pantalla.ocultar()
                     niveles.avanzar()
                     estado.anunciado(false)
                 })
             } else {
-                game.say(fuego, "Ganaron! (R para reiniciar)")
+                pantalla.mostrar(cartelGanaron)
             }
         } else if (!estado.anunciado() && niveles.actual().perdio()) {
             estado.anunciado(true)
-            game.say(fuego, "Perdieron (R para reiniciar)")
+            pantalla.mostrar(cartelPerdieron)
         }
     })
 

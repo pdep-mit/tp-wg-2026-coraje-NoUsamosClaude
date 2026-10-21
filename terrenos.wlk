@@ -1,16 +1,16 @@
 
 class Terreno {
     const property position
-    method image() = ""
-    method esSolido() = false
 
+    method esSolido() = false
 
     method interactuarCon(personaje) {
         self.aplicarEfecto(personaje)
     }
 
-    method aplicarEfecto(personaje) {
-    }
+    method image()
+
+    method aplicarEfecto(personaje)
 }
 
 class Lava inherits Terreno {

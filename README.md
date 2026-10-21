@@ -6,8 +6,8 @@
 - Carlos Eduardo Saikali Pulido
 - Maximo Lautaro Starowiecki
 - Ariana Castro
-- Nombre y Apellido
-- Nombre y Apellido
+- Nicole Brunstein
+- Thiago Nicolas Lewin
 
 ## Consignas
 

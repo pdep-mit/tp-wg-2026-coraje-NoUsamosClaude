@@ -1,9 +1,6 @@
 import wollok.game.*
 import personajes.*
 import direcciones.*
-import paredes.*
-import terrenos.*
-import puertas.*
 import nivel.*
 
 program demo {
@@ -12,44 +9,7 @@ program demo {
     game.height(10)
     game.width(10)
 
-    fuego.reiniciar()
-    agua.reiniciar()
-    fuego.position(game.at(1, 1))
-    agua.position(game.at(1, 2))
-
-    (0..9).forEach({ n =>
-        game.addVisual(new Pared(position = game.at(n, 0)))
-        game.addVisual(new Pared(position = game.at(n, 9)))
-        game.addVisual(new Pared(position = game.at(0, n)))
-        game.addVisual(new Pared(position = game.at(9, n)))
-    })
-    (1..6).forEach({ n => game.addVisual(new Pared(position = game.at(5, n)))})
-    //game.addVisual(new Pared(position = game.at(2, 3)))
-    (3..4).forEach({ n =>game.addVisual(new Pared(position = game.at(2, n)))})
-    (3..4).forEach({ n =>game.addVisual(new Pared(position = game.at(n, 6)))})
-
-    const paredRompibleArriba = new ParedRompible(position = game.at(5, 8))
-    const paredRompibleAbajo = new ParedRompible(position = game.at(5, 7))
-    game.addVisual(paredRompibleArriba)
-    game.addVisual(paredRompibleAbajo)
-    game.addVisual(new Boton(position = game.at(1, 8), paredes = [paredRompibleArriba, paredRompibleAbajo]))
-
-    game.addVisual(new Lava(position = game.at(3, 1)))
-    game.addVisual(new Lava(position = game.at(3, 2)))
-    game.addVisual(new Lava(position = game.at(4, 2)))
-
-    game.addVisual(new ZonaAgua(position = game.at(3, 4)))
-    game.addVisual(new ZonaAgua(position = game.at(3, 5)))    
-    game.addVisual(new Lava(position = game.at(7, 7)))
-    game.addVisual(new ZonaAgua(position = game.at(7, 8)))
-    game.addVisual(new Acido(position = game.at(4, 4)))
-    game.addVisual(new Acido(position = game.at(4, 5)))
-    game.addVisual(new ZonaAgua(position = game.at(6, 5)))
-    game.addVisual(new PuertaFuego(position = game.at(8, 1)))
-    game.addVisual(new PuertaAgua(position = game.at(8, 2)))
-
-    game.addVisual(fuego)
-    game.addVisual(agua)
+    niveles.empezar()
 
     const intervaloMovimiento = 130
     keyboard.w().whilePressedDo({ fuego.mover(arriba) }, intervaloMovimiento)
@@ -65,20 +25,23 @@ program demo {
     const estado = object { var property anunciado = false }
 
     keyboard.r().onPressDo({
-        fuego.reiniciar()
-        agua.reiniciar()
-        fuego.position(game.at(1, 1))
-        agua.position(game.at(1, 2))
-        paredRompibleArriba.reiniciar()
-        paredRompibleAbajo.reiniciar()
+        niveles.reiniciar()
         estado.anunciado(false)
     })
 
     game.onTick(100, "fin", {
-        if (!estado.anunciado() && nivel1.gano()) {
+        if (!estado.anunciado() && niveles.actual().gano()) {
             estado.anunciado(true)
-            game.say(fuego, "Ganaron! (R para reiniciar)")
-        } else if (!estado.anunciado() && nivel1.perdio()) {
+            if (niveles.hayProximo()) {
+                game.say(fuego, "Nivel superado!")
+                game.schedule(1500, {
+                    niveles.avanzar()
+                    estado.anunciado(false)
+                })
+            } else {
+                game.say(fuego, "Ganaron! (R para reiniciar)")
+            }
+        } else if (!estado.anunciado() && niveles.actual().perdio()) {
             estado.anunciado(true)
             game.say(fuego, "Perdieron (R para reiniciar)")
         }

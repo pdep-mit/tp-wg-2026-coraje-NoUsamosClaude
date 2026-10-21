@@ -1,0 +1,157 @@
+import personajes.*
+import direcciones.*
+import nivel.*
+
+describe "Tests de niveles" {
+
+    method initialize() {
+        game.width(10)
+        game.height(10)
+        niveles.empezar()
+    }
+
+    test "El juego empieza en el nivel 1" {
+        assert.equals(nivel1, niveles.actual())
+    }
+
+    test "Despues del nivel 1 hay un proximo nivel" {
+        assert.that(niveles.hayProximo())
+    }
+
+    test "Avanzar pasa al nivel 2" {
+        niveles.avanzar()
+
+        assert.equals(nivel2, niveles.actual())
+    }
+
+    test "El nivel 2 es el ultimo" {
+        niveles.avanzar()
+
+        assert.notThat(niveles.hayProximo())
+    }
+
+    test "Al avanzar los personajes van a las posiciones iniciales del nivel 2" {
+        niveles.avanzar()
+
+        assert.equals(nivel2.posicionFuego(), fuego.position())
+        assert.equals(nivel2.posicionAgua(), agua.position())
+    }
+
+    test "Al avanzar los personajes quedan vivos y sin llegada" {
+        fuego.marcarLlegada()
+        agua.morir()
+
+        niveles.avanzar()
+
+        assert.that(fuego.vivo())
+        assert.that(agua.vivo())
+        assert.notThat(fuego.llegoAPuerta())
+        assert.notThat(agua.llegoAPuerta())
+    }
+
+    test "Al avanzar se descargan los elementos del nivel 1" {
+        niveles.avanzar()
+
+        assert.notThat(game.getObjectsIn(game.at(5, 1)).isEmpty())
+        assert.that(game.getObjectsIn(game.at(8, 2)).isEmpty())
+    }
+
+    test "Reiniciar vuelve a poner los personajes en el inicio del nivel" {
+        fuego.mover(derecha)
+        agua.morir()
+
+        niveles.reiniciar()
+
+        assert.equals(nivel1.posicionFuego(), fuego.position())
+        assert.that(agua.vivo())
+    }
+
+    test "El nivel 1 no se gana al empezar" {
+        assert.notThat(nivel1.gano())
+    }
+
+    test "Se puede ganar el nivel 1 y avanzar al nivel 2" {
+        fuego.position(game.at(8, 1))
+        agua.position(game.at(8, 3))
+        agua.mover(abajo)
+        fuego.mover(derecha)
+        fuego.mover(izquierda)
+        fuego.mover(derecha)
+
+        assert.that(niveles.actual().gano())
+        niveles.avanzar()
+        assert.equals(nivel2, niveles.actual())
+    }
+}
+
+describe "Tests del nivel 2" {
+
+    method initialize() {
+        game.width(10)
+        game.height(10)
+        niveles.empezar()
+        niveles.avanzar()
+    }
+
+    test "Fuego no puede cruzar la pared rompible antes de apretar el boton" {
+        fuego.position(game.at(4, 4))
+
+        fuego.mover(derecha)
+
+        assert.equals(game.at(4, 4), fuego.position())
+    }
+
+    test "Fuego pisa el boton y abre el camino" {
+        fuego.position(game.at(4, 3))
+        fuego.mover(abajo)
+
+        fuego.position(game.at(4, 4))
+        fuego.mover(derecha)
+
+        assert.equals(game.at(5, 4), fuego.position())
+    }
+
+    test "Fuego muere en el agua del nivel 2" {
+        fuego.position(game.at(6, 6))
+
+        fuego.mover(abajo)
+
+        assert.notThat(fuego.vivo())
+    }
+
+    test "Agua muere en la lava del nivel 2" {
+        agua.position(game.at(8, 7))
+
+        agua.mover(abajo)
+
+        assert.notThat(agua.vivo())
+    }
+
+    test "Ambos mueren en el acido del nivel 2" {
+        fuego.position(game.at(4, 6))
+        agua.position(game.at(4, 2))
+        fuego.mover(izquierda)
+        agua.mover(abajo)
+
+        assert.notThat(fuego.vivo())
+        assert.notThat(agua.vivo())
+        assert.that(nivel2.perdio())
+    }
+
+    test "Se puede ganar el nivel 2 con los dos personajes colaborando" {
+        [abajo, abajo, abajo, abajo, derecha, derecha, derecha, abajo, abajo, arriba, arriba,
+         derecha, derecha, derecha, derecha, abajo, abajo, abajo].forEach({ direccion => fuego.mover(direccion) })
+        [izquierda, izquierda, abajo, abajo, abajo, abajo, izquierda, izquierda, abajo, abajo,
+         izquierda, izquierda, izquierda, abajo].forEach({ direccion => agua.mover(direccion) })
+
+        assert.that(nivel2.gano())
+        assert.notThat(nivel2.perdio())
+    }
+
+    test "Agua sola no puede ganar el nivel 2 sin que fuego abra el camino" {
+        [izquierda, izquierda, abajo, abajo, abajo, abajo, izquierda, izquierda, abajo, abajo,
+         izquierda, izquierda, izquierda, abajo].forEach({ direccion => agua.mover(direccion) })
+
+        assert.notThat(nivel2.gano())
+    }
+}

@@ -15,18 +15,17 @@ describe "Tests de personajes" {
         assert.notThat(fuego.vivo())
     }
 
-    test "fuego no muere al tocar fuego" {
+    test "fuego no muere al tocar lava" {
         fuego.revivir()
 
-        fuego.tocarFuego()
-
+        fuego.tocarLava()
         assert.that(fuego.vivo())
     }
 
-    test "agua muere al tocar fuego" {
+    test "agua muere al tocar lava" {
         agua.revivir()
 
-        agua.tocarFuego()
+        agua.tocarLava()
 
         assert.notThat(agua.vivo())
     }

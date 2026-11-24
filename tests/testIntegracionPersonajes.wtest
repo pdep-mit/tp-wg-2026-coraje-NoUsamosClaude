@@ -96,15 +96,31 @@ describe "Integracion de personajes" {
         assert.notThat(pared.rota())
     }
 
-    test "Los personajes pueden compartir una casilla sin bloquearse" {
-        agua.position(game.at(2, 1))
+    test "Agua muere al entrar en la casilla de Fuego" {
+    fuego.reiniciar()
+    agua.reiniciar()
+    fuego.position(game.at(2, 1))
+    agua.position(game.at(1, 1))
 
-        fuego.mover(derecha)
+    agua.mover(derecha)
 
-        assert.equals(agua.position(), fuego.position())
-        assert.that(fuego.vivo())
-        assert.that(agua.vivo())
-    }
+    assert.equals(fuego.position(), agua.position())
+    assert.notThat(agua.vivo())
+    assert.that(fuego.vivo())
+}
+
+test "Fuego muere al entrar en la casilla de Agua" {
+    fuego.reiniciar()
+    agua.reiniciar()
+    agua.position(game.at(2, 1))
+    fuego.position(game.at(1, 1))
+
+    fuego.mover(derecha)
+
+    assert.equals(agua.position(), fuego.position())
+    assert.notThat(fuego.vivo())
+    assert.that(agua.vivo())
+}
 
     test "Morir en la puerta impide ganar aunque el otro ya haya llegado" {
         game.addVisual(new PuertaFuego(position = game.at(2, 1)))

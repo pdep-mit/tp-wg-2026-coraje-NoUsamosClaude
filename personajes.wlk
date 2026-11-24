@@ -12,10 +12,6 @@ class Personaje {
     method interactuarConPuertaFuego()
     method interactuarConPuertaAgua()
 
-    method tocarFuego() {
-        self.tocarLava()
-    }
-
     method morir() {
         vivo = false
         llegoAPuerta = false
@@ -27,8 +23,7 @@ class Personaje {
 
     method esSolido() = false
 
-    method interactuarCon(otroPersonaje) {
-    }
+    method interactuarCon(otroPersonaje)
 
     method mover(direccion) {
         const destino = direccion.siguiente(position)
@@ -68,7 +63,9 @@ object fuego inherits Personaje {
 
     override method tocarLava() {
     }
-
+    override method interactuarCon(otroPersonaje) {
+        otroPersonaje.tocarLava()
+    }
     override method interactuarConPuertaFuego() {
         self.marcarLlegada()
     }
@@ -87,7 +84,9 @@ object agua inherits Personaje {
     override method tocarLava() {
         self.morir()
     }
-
+    override method interactuarCon(otroPersonaje) {
+        otroPersonaje.tocarAgua()
+    }
     override method interactuarConPuertaFuego() {
     }
 

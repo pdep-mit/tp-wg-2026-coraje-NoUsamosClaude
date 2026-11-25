@@ -14,7 +14,7 @@
 
 Todo lo que necesitan saber está explicado en [este documento](https://docs.google.com/document/d/1KoB12RIZk_xPhmnOJ-EfLIPNwkETD_EaYMp2srDu9QY/edit?tab=t.0#heading=h.wnm2lu4cls8j). Para todo lo demás, aseguren prestar atención a los comunicados por Discord.
 
-
+Revisen los archivos de base y cambien lo que quieran para ajustarlo a sus necesidades.
 
 Recuerden que para cada checkpoint hay [expectativas mínimas](https://docs.google.com/document/d/1KoB12RIZk_xPhmnOJ-EfLIPNwkETD_EaYMp2srDu9QY/edit?tab=t.0#heading=h.56t0qdv908v3) respecto a los conceptos aplicados. Procuren:
 
@@ -80,5 +80,4 @@ Ambos personajes deben colaborar para superar los obstáculos, activar los mecan
 
 ## Explicaciones
 
-Las explicaciones teóricas y diagramas están en [explicaciones.md](https://github.com/pdep-mit/tp-wg-2026-coraje-NoUsamosClaude/blob/main/explicaciones.md).
-
+Las explicaciones teóricas y diagramas están en [explicaciones.md](https://github.com/pdep-mit/tp-wg-2026-coraje-NoUsamosClaude/blob/main/explicaciones.md). Ahí se detalla dónde aplicamos objetos y clases, polimorfismo, herencia, colecciones y bloques, junto con un diagrama de clases y uno de secuencia del movimiento.

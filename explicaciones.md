@@ -8,9 +8,10 @@ Cada elemento del juego es un objeto con su responsabilidad: los personajes (`fu
 
 Cuando un personaje entra a una celda, `Personaje.mover` le manda `interactuarCon(self)` a **todos** los objetos de esa celda, sin preguntar qué son. Cada uno responde a su manera:
 
-- `Lava` llama `personaje.tocarLava()`: `fuego` no hace nada y `agua` muere. `ZonaAgua` hace lo mismo con `tocarAgua()`, y `Acido` mata a cualquiera.
+- `Terreno` delega en `aplicarEfecto`, que cada subclase define distinto: `Lava` llama `personaje.tocarLava()` (`fuego` no hace nada y `agua` muere), `ZonaAgua` llama `tocarAgua()` y `Acido` mata a cualquiera.
+- `Boton` rompe las paredes que tiene asociadas.
 - Las puertas le piden al personaje `interactuarConPuertaFuego()` o `interactuarConPuertaAgua()`, y solo el personaje correspondiente marca su llegada.
-- `Pared`, `ParedRompible`, `Boton` y `Cartel` entienden `esSolido()` e `interactuarCon`, así que el personaje los trata a todos igual.
+- `Pared`, `ParedRompible` y `Cartel` entienden `esSolido()` e `interactuarCon`, así que el personaje los trata a todos igual.
 
 ## Herencia
 
@@ -27,13 +28,13 @@ Cuando un personaje entra a una celda, `Personaje.mover` le manda `interactuarCo
 - `Boton` conoce la lista de `paredes` que rompe.
 - Usamos `map`, `forEach`, `any` y rangos (`1..6`) para generar y recorrer los elementos.
 
-## Correcciones de diseño (entrega final)
+## Bloques
 
-No agregamos mecánicas, mejoramos el diseño:
+Pasamos bloques a Wollok Game para indicarle qué código ejecutar cuando se aprieta una tecla o pasa cierto tiempo:
 
-1. **`Terreno` abstracta:** `image()` e `interactuarCon(personaje)` quedan sin cuerpo. Antes se podía crear un terreno que no se veía ni hacía nada, y `interactuarCon` solo delegaba en `aplicarEfecto`.
-2. **Pared rompible con estado:** los objetos `intacta` y `rota` resuelven `romper()` y `reiniciar()`. Así desaparecen el flag `rota` y los `if (game.hasVisual(self))`. `ParedRompible` hereda `esSolido() = true` de `Obstaculo`: al romperse sale del tablero, así que nunca bloquea.
-3. **Movimiento uniforme:** las teclas solo cambian la dirección actual del personaje, y un único `game.onTick` hace avanzar a ambos una celda por intervalo. El personaje sin dirección usa el objeto `quieto`, sin `if`. Antes, `whilePressedDo` creaba un temporizador por tecla y la velocidad era irregular.
+- `keyboard.w().whilePressedDo({ fuego.mover(arriba) }, 130)` mueve a `fuego` mientras se mantiene la tecla.
+- `game.schedule(1500, { ... })` oculta el cartel y avanza de nivel después de 1,5 segundos.
+- `game.onTick(100, "fin", { ... })` revisa cada 100 ms si ganaron o perdieron.
 
 # Diagramas
 
@@ -49,6 +50,7 @@ classDiagram
         +mover(direccion)
         +tocarAgua()*
         +tocarLava()*
+        +interactuarCon(otro)*
         +morir()
         +reiniciar()
     }
@@ -65,7 +67,8 @@ classDiagram
         <<abstract>>
         +position
         +image()*
-        +interactuarCon(personaje)*
+        +aplicarEfecto(personaje)*
+        +interactuarCon(personaje)
         +esSolido() false
     }
     Terreno <|-- Lava
@@ -77,14 +80,13 @@ classDiagram
         +esSolido() true
     }
     class ParedRompible {
-        +estado
+        +rota
         +romper()
         +reiniciar()
+        +esSolido() not rota
     }
     Obstaculo <|-- Pared
     Obstaculo <|-- ParedRompible
-    ParedRompible --> intacta : estado
-    ParedRompible --> rota : estado
 
     class Boton {
         +paredes
@@ -94,6 +96,7 @@ classDiagram
 
     class Nivel {
         <<abstract>>
+        +elementosCargados
         +cargar()
         +descargar()
         +gano()
